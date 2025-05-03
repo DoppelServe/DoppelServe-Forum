@@ -43,7 +43,81 @@ $db_config = [
 ];
 ```
 
-4. Configure nginx (see `nginx/forum.conf`)
+4. Configure nginx
+
+Create `/etc/nginx/conf.d/forum_rate_limits.conf`:
+```nginx
+# Rate limit zones
+limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+limit_req_zone $binary_remote_addr zone=register:10m rate=3r/h;
+limit_req_zone $binary_remote_addr zone=thread:10m rate=10r/h;
+limit_req_zone $binary_remote_addr zone=reply:10m rate=30r/h;
+```
+
+Create `/etc/nginx/sites-available/forum.conf`:
+```nginx
+server {
+    listen 80;
+    server_name your-forum.onion;
+    root /var/www/forum;
+    
+    index index.php;
+    
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Referrer-Policy no-referrer;
+    add_header Content-Security-Policy "default-src 'self'";
+    
+    # Apply rate limits
+    location = /login.php {
+        limit_req zone=login burst=3 nodelay;
+        include fastcgi_php.conf;
+    }
+    
+    location = /register.php {
+        limit_req zone=register burst=2 nodelay;
+        include fastcgi_php.conf;
+    }
+    
+    location = /create_thread.php {
+        limit_req zone=thread burst=5 nodelay;
+        include fastcgi_php.conf;
+    }
+    
+    location = /reply.php {
+        limit_req zone=reply burst=10 nodelay;
+        include fastcgi_php.conf;
+    }
+    
+    # PHP handler
+    location ~ \.php$ {
+        include fastcgi_php.conf;
+    }
+    
+    # Block access to hidden files
+    location ~ /\. {
+        deny all;
+    }
+}
+```
+
+Create `/etc/nginx/fastcgi_php.conf`:
+```nginx
+try_files $uri =404;
+fastcgi_pass unix:/var/run/php/php-fpm.sock;
+fastcgi_index index.php;
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+include fastcgi_params;
+```
+
+Enable the site:
+```bash
+ln -s /etc/nginx/sites-available/forum.conf /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+```
 
 5. Set proper permissions
 ```bash
