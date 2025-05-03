@@ -82,11 +82,11 @@ class Database {
     
     public function getThreadsByCategory($categoryId, $limit, $offset) {
         return $this->fetchAll(
-            "SELECT t.*, u.username 
-             FROM threads t 
-             JOIN users u ON t.user_id = u.id 
-             WHERE t.category_id = ? 
-             ORDER BY t.created_at DESC 
+            "SELECT t.*, u.username
+             FROM threads t
+             JOIN users u ON t.user_id = u.id
+             WHERE t.category_id = ?
+             ORDER BY t.created_at DESC
              LIMIT ? OFFSET ?",
             [$categoryId, $limit, $offset]
         );
@@ -94,11 +94,11 @@ class Database {
     
     public function getRecentThreads($limit, $offset) {
         return $this->fetchAll(
-            "SELECT t.*, u.username, c.name as category_name 
-             FROM threads t 
-             JOIN users u ON t.user_id = u.id 
-             JOIN categories c ON t.category_id = c.id 
-             ORDER BY t.created_at DESC 
+            "SELECT t.*, u.username, c.name as category_name
+             FROM threads t
+             JOIN users u ON t.user_id = u.id
+             JOIN categories c ON t.category_id = c.id
+             ORDER BY t.created_at DESC
              LIMIT ? OFFSET ?",
             [$limit, $offset]
         );
