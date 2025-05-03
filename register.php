@@ -1,5 +1,6 @@
 <?php
-require 'bootstrap.php';
+
+require_once 'bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!validateToken($_POST['token'] ?? '')) {
@@ -26,10 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+    
 ?>
   
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Register - DoppelServe-Forum</title>
