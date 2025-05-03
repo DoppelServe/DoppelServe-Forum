@@ -39,7 +39,7 @@ function validateInput($input, $rules) {
     if (isset($rules['complex']) && $rules['complex']) {
         $patterns = [
             '/[A-Z]/' => 'uppercase letter',
-            '/[a-z]/' => 'lowercase letter', 
+            '/[a-z]/' => 'lowercase letter',
             '/[0-9]/' => 'number',
             '/[^A-Za-z0-9]/' => 'special character'
         ];
