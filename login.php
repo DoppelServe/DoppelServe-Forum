@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <h2>Login</h2>
     
-    <?php if (isset($error)) echo showError($error); ?>
+<?php 
+    if (isset($error)) {
+        echo showError($error); 
+    }
+        ?>
     
     <form method="post">
         <input type="hidden" name="token" value="<?= generateToken() ?>">
