@@ -1,6 +1,7 @@
 <?php
 
-require 'bootstrap.php';
+require_once 'bootstrap.php';
+
 requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
