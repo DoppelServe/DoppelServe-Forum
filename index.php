@@ -1,5 +1,6 @@
 <?php
-require 'bootstrap.php';
+
+require_once 'bootstrap.php';
 
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $limit = 10;
@@ -11,10 +12,11 @@ $threads = $db->getRecentThreads($limit, $offset);
 
 $totalThreads = $db->countThreads();
 $totalPages = ceil($totalThreads / $limit);
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>DoppelServe-Forum</title>
