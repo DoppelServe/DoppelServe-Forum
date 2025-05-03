@@ -1,5 +1,6 @@
 <?php
-require 'bootstrap.php';
+
+require_once 'bootstrap.php';
 
 $thread_id = (int)($_GET['id'] ?? 0);
 if (!$thread_id) {
@@ -15,10 +16,11 @@ if (!$thread) {
 }
 
 $replies = $db->getRepliesByThread($thread_id);
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title><?= sanitize($thread['title']) ?> - DoppelServe-Forum</title>
