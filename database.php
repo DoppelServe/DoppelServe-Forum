@@ -71,10 +71,10 @@ class Database {
     
     public function getThread($id) {
         return $this->fetch(
-            "SELECT t.*, u.username, c.name as category_name 
-             FROM threads t 
-             JOIN users u ON t.user_id = u.id 
-             JOIN categories c ON t.category_id = c.id 
+            "SELECT t.*, u.username, c.name as category_name
+             FROM threads t
+             JOIN users u ON t.user_id = u.id
+             JOIN categories c ON t.category_id = c.id
              WHERE t.id = ?",
             [$id]
         );
@@ -106,10 +106,10 @@ class Database {
     
     public function getRepliesByThread($threadId) {
         return $this->fetchAll(
-            "SELECT r.*, u.username 
-             FROM replies r 
-             JOIN users u ON r.user_id = u.id 
-             WHERE r.thread_id = ? 
+            "SELECT r.*, u.username
+             FROM replies r
+             JOIN users u ON r.user_id = u.id
+             WHERE r.thread_id = ?
              ORDER BY r.created_at",
             [$threadId]
         );
