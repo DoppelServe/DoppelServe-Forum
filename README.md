@@ -61,17 +61,6 @@ chown -R www-data:www-data /path/to/forum
 - Session regeneration on login
 - Input validation and sanitization
 
-## Structure
-
-```
-/forum/
-├── bootstrap.php    # Application initialization
-├── config.php       # Database configuration
-├── database.php     # PDO wrapper class
-├── functions.php    # Helper functions
-└── *.php           # Forum pages
-```
-
 ## Contributing
 
 Pull requests welcome. Please follow existing code style and security practices.
