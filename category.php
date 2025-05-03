@@ -1,6 +1,6 @@
 <?php
 
-require 'bootstrap.php';
+require_once 'bootstrap.php';
 
 $category_id = (int)($_GET['id'] ?? 0);
 if (!$category_id) {
@@ -25,7 +25,7 @@ $totalPages = ceil($totalThreads / $limit);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title><?= sanitize($category['name']) ?> - DoppelServe-Forum</title>
