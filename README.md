@@ -14,6 +14,12 @@ A lightweight, privacy-focused PHP forum designed for Tor and high-security envi
 - **Rate Limiting**: nginx-based protection against abuse
 - **Clean Architecture**: Modular PDO wrapper, DRY principles
 
+## SonarCloud
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DoppelServe_DoppelServe-Forum&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DoppelServe_DoppelServe-Forum)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DoppelServe_DoppelServe-Forum&metric=bugs)](https://sonarcloud.io/summary/new_code?id=DoppelServe_DoppelServe-Forum)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DoppelServe_DoppelServe-Forum&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DoppelServe_DoppelServe-Forum)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DoppelServe_DoppelServe-Forum&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DoppelServe_DoppelServe-Forum)
+
 ## Requirements
 
 - PHP 7.4+
