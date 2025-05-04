@@ -3,6 +3,13 @@
 require_once 'bootstrap.php';
 requireLogin();
 
+$selected_category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : null;
+
+if (!$selected_category_id) {
+    header('Location: index.php');
+    exit;
+}
+
 $categories = $db->getCategories();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,13 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!$category_id) {
             $error = 'Select a category';
         } else {
-            $db->createThread($_SESSION['user_id'], $category_id, trim($title), trim($body));
-            header('Location: index.php');
+            $thread_id = $db->createThread($_SESSION['user_id'], $category_id, trim($title), trim($body));
+            header('Location: category.php?id=' . $category_id);
             exit;
         }
     }
 }
-    
 ?>
   
 <!DOCTYPE html>
@@ -56,14 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <form method="post">
         <input type="hidden" name="token" value="<?= generateToken() ?>">
-        <label>Category:
-            <select name="category_id" required>
-                <option value="">Select category</option>
-                <?php foreach ($categories as $category): ?>
-                    <option value="<?= $category['id'] ?>"><?= sanitize($category['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-        </label><br>
+        <input type="hidden" name="category_id" value="<?= $selected_category_id ?>">
+        <?php
+        // Get the selected category for display
+        $selected_category = null;
+        foreach ($categories as $category) {
+            if ($category['id'] == $selected_category_id) {
+                $selected_category = $category;
+                break;
+            }
+        }
+        ?>
+        <p><strong>Category:</strong> <?= sanitize($selected_category['name']) ?></p>
         <label>Title: <input type="text" name="title" required></label><br>
         <label>Body: <textarea name="body" required></textarea></label><br>
         <button type="submit">Create</button>
