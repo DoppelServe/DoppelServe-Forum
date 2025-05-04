@@ -1,24 +1,39 @@
 <?php
-
 require_once 'bootstrap.php';
-
 $thread_id = (int)($_GET['id'] ?? 0);
 if (!$thread_id) {
     header('Location: index.php');
     exit;
 }
-
 $thread = $db->getThread($thread_id);
-
 if (!$thread) {
     header('Location: index.php');
     exit;
 }
 
-$replies = $db->getRepliesByThread($thread_id);
+// Pagination settings
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$limit = 3;
+$offset = ($page - 1) * $limit;
 
+// Get paginated replies
+$replies = $db->getRepliesByThreadPaginated($thread_id, $limit, $offset);
+$totalReplies = $db->countRepliesByThread($thread_id);
+$totalPages = ceil($totalReplies / $limit);
+
+// Check for reply error in session
+$replyError = null;
+if (isset($_SESSION['error'])) {
+    $replyError = $_SESSION['error'];
+    unset($_SESSION['error']);
+}
+// Check for saved reply body
+$savedReplyBody = '';
+if (isset($_SESSION['reply_body'])) {
+    $savedReplyBody = $_SESSION['reply_body'];
+    unset($_SESSION['reply_body']);
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,12 +74,29 @@ $replies = $db->getRepliesByThread($thread_id);
         </div>
     <?php endforeach; ?>
     
+    <?php if ($totalPages > 1): ?>
+        <div class="pagination">
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <?php if ($i == $page): ?>
+                    <span><?= $i ?></span>
+                <?php else: ?>
+                    <a href="?id=<?= $thread_id ?>&page=<?= $i ?>"><?= $i ?></a>
+                <?php endif; ?>
+            <?php endfor; ?>
+        </div>
+    <?php endif; ?>
+    
     <?php if (isLoggedIn()): ?>
         <h3>Post Reply</h3>
+        
+        <?php if ($replyError): ?>
+            <?= showError($replyError) ?>
+        <?php endif; ?>
+        
         <form method="post" action="reply.php">
             <input type="hidden" name="token" value="<?= generateToken() ?>">
             <input type="hidden" name="thread_id" value="<?= $thread_id ?>">
-            <label>Reply: <textarea name="body" required></textarea></label><br>
+            <label>Reply: <textarea name="body" required><?= sanitize($savedReplyBody) ?></textarea></label><br>
             <button type="submit">Reply</button>
         </form>
     <?php else: ?>

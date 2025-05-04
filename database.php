@@ -316,4 +316,36 @@ class Database {
             [$categoryId]
         );
     }
+    /**
+     * Fetches replies for a specific thread with pagination.
+     *
+     * @param int $threadId The ID of the thread.
+     * @param int $limit The number of replies to fetch.
+     * @param int $offset The offset for pagination.
+     * @return array An array of replies as associative arrays.
+     */
+    public function getRepliesByThreadPaginated($threadId, $limit, $offset) {
+        return $this->fetchAll(
+            "SELECT r.*, u.username
+             FROM replies r
+             JOIN users u ON r.user_id = u.id
+             WHERE r.thread_id = ?
+             ORDER BY r.created_at
+             LIMIT ? OFFSET ?",
+            [$threadId, $limit, $offset]
+        );
+    }
+    
+    /**
+     * Counts the number of replies for a specific thread.
+     *
+     * @param int $threadId The ID of the thread.
+     * @return int The number of replies.
+     */
+    public function countRepliesByThread($threadId) {
+        return $this->fetchColumn(
+            "SELECT COUNT(*) FROM replies WHERE thread_id = ?",
+            [$threadId]
+        );
+    }
 }
