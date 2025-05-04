@@ -22,35 +22,119 @@ function logout() {
     session_destroy();
 }
 
+/**
+ * Checks if the input meets the minimum length requirement.
+ *
+ * @param string $input The input string to check.
+ * @param int $min The minimum length required.
+ * @param string|null $error Optional custom error message.
+ * @return string|null Error message if validation fails, null otherwise.
+ */
+function checkMinLength($input, $min, $error = null) {
+    if (strlen($input) < $min) {
+        if ($error !== null) {
+            return sprintf($error, $min);
+        } else {
+            return "Must be at least $min characters";
+        }
+    }
+    return null;
+}
+
+/**
+ * Checks if the input exceeds the maximum length requirement.
+ *
+ * @param string $input The input string to check.
+ * @param int $max The maximum length allowed.
+ * @param string|null $error Optional custom error message.
+ * @return string|null Error message if validation fails, null otherwise.
+ */
+function checkMaxLength($input, $max, $error = null) {
+    if (strlen($input) > $max) {
+        if ($error !== null) {
+            return sprintf($error, $max);
+        } else {
+            return "Must be no more than $max characters";
+        }
+    }
+    return null;
+}
+
+/**
+ * Checks if the input matches the specified regex pattern.
+ *
+ * @param string $input The input string to check.
+ * @param string $pattern The regex pattern to match against.
+ * @param string|null $patternError Optional custom error message.
+ * @return string|null Error message if validation fails, null otherwise.
+ */
+function checkPattern($input, $pattern, $patternError = null) {
+    if (!preg_match($pattern, $input)) {
+        return $patternError ?? "Invalid format";
+    }
+    return null;
+}
+
+/**
+ * Checks if the input meets the complexity requirements.
+ *
+ * @param string $input The input string to check.
+ * @return string|null Error message if validation fails, null otherwise.
+ */
+function checkComplexity($input) {
+    $patterns = [
+        '/[A-Z]/' => 'uppercase letter',
+        '/[a-z]/' => 'lowercase letter',
+        '/[0-9]/' => 'number',
+        '/[^A-Za-z0-9]/' => 'special character'
+    ];
+    $missing = [];
+    foreach ($patterns as $pattern => $type) {
+        if (!preg_match($pattern, $input)) {
+            $missing[] = $type;
+        }
+    }
+    if ($missing) {
+        return "Password needs: " . implode(', ', $missing);
+    }
+    return null;
+}
+
+/**
+ * Validates the input against the provided rules.
+ *
+ * @param string $input The input string to validate.
+ * @param array $rules The validation rules.
+ * @return string|null Error message if validation fails, null otherwise.
+ */
 function validateInput($input, $rules) {
     $input = trim($input);
     
-    if (isset($rules['min']) && strlen($input) < $rules['min']) {
-        return sprintf($rules['error'] ?? "Must be at least %d characters", $rules['min']);
-    }
-    if (isset($rules['max']) && strlen($input) > $rules['max']) {
-        return sprintf($rules['error'] ?? "Must be no more than %d characters", $rules['max']);
+    if (isset($rules['min'])) {
+        $error = checkMinLength($input, $rules['min'], $rules['error'] ?? null);
+        if ($error) {
+            return $error;
+        }
     }
     
-    if (isset($rules['pattern']) && !preg_match($rules['pattern'], $input)) {
-        return $rules['patternError'] ?? "Invalid format";
+    if (isset($rules['max'])) {
+        $error = checkMaxLength($input, $rules['max'], $rules['error'] ?? null);
+        if ($error) {
+            return $error;
+        }
+    }
+    
+    if (isset($rules['pattern'])) {
+        $error = checkPattern($input, $rules['pattern'], $rules['patternError'] ?? null);
+        if ($error) {
+            return $error;
+        }
     }
     
     if (isset($rules['complex']) && $rules['complex']) {
-        $patterns = [
-            '/[A-Z]/' => 'uppercase letter',
-            '/[a-z]/' => 'lowercase letter',
-            '/[0-9]/' => 'number',
-            '/[^A-Za-z0-9]/' => 'special character'
-        ];
-        $missing = [];
-        foreach ($patterns as $pattern => $type) {
-            if (!preg_match($pattern, $input)) {
-                $missing[] = $type;
-            }
-        }
-        if ($missing) {
-            return "Password needs: " . implode(', ', $missing);
+        $error = checkComplexity($input);
+        if ($error) {
+            return $error;
         }
     }
     
