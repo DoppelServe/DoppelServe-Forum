@@ -40,7 +40,7 @@ $totalPages = ceil($totalThreads / $limit);
     <nav>
         <a href="index.php">Home</a>
         <?php if (isLoggedIn()): ?>
-            | <a href="create_thread.php">New Thread</a>
+            | <a href="create_thread.php?category_id=<?= $category_id ?>">New Thread</a>
             | <a href="logout.php">Logout</a>
         <?php else: ?>
             | <a href="login.php">Login</a>
